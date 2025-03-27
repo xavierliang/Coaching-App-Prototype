@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料 - Life Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; }
+        .status-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            height: 20px;
+        }
+        .header-container { 
+            padding: 5px 1rem 0; /* 增加顶部内边距 */
+            margin: 0;
+            height: 45px; /* 增加高度以适应更大的上边距 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: fixed;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 40;
+        }
+        .main-content {
+            padding-top: 65px; /* 状态栏20px + 顶部导航45px，移除额外间距 */
+            padding-bottom: 70px; /* 为底部导航腾出空间 */
+        }
+        .footer-iframe {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            margin: 0;
+            padding: 0;
+            z-index: 50;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 引入状态栏 -->
+    <div class="status-bar-container">
+        <iframe src="../components/status-bar.html" class="w-full h-full border-0"></iframe>
+    </div>
+    
+    <!-- 内联顶部导航，不使用iframe -->
+    <div class="header-container">
+        <h1 class="text-lg font-semibold text-gray-800">Life Coach</h1>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-bell text-lg"></i>
+            </button>
+            <button class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-search text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 个人资料头部 -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 pt-6 pb-10 px-6 relative">
+            <div class="flex flex-col items-center">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="用户头像" 
+                     class="w-20 h-20 rounded-full border-2 border-white object-cover">
+                <h2 class="text-white font-bold text-xl mt-3">Sarah Wang</h2>
+                <p class="text-blue-100 text-sm">已加入 3 个月</p>
+            </div>
+        </div>
+
+        <!-- 个人信息卡片 -->
+        <div class="bg-white rounded-t-3xl -mt-6 relative z-10 p-6">
+            <!-- 个人简介 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-3">个人简介</h3>
+                <p class="text-gray-600 text-sm">热爱学习的产品经理，目前在努力提升自己的领导力和沟通技巧。喜欢旅行，阅读和瑜伽。</p>
+            </div>
+
+            <!-- 学习统计 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-3">学习统计</h3>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 p-3 rounded-lg text-center">
+                        <p class="text-blue-500 font-bold text-xl">12</p>
+                        <p class="text-gray-500 text-xs mt-1">已完成课程</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg text-center">
+                        <p class="text-blue-500 font-bold text-xl">5</p>
+                        <p class="text-gray-500 text-xs mt-1">工作坊参与</p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg text-center">
+                        <p class="text-blue-500 font-bold text-xl">8</p>
+                        <p class="text-gray-500 text-xs mt-1">教练课程</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的成就 -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-3">我的成就</h3>
+                <div class="flex overflow-x-auto py-2 space-x-4">
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="w-12 h-12 mx-auto bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <p class="text-xs mt-1">学习新星</p>
+                    </div>
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="w-12 h-12 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <p class="text-xs mt-1">连续打卡</p>
+                    </div>
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="w-12 h-12 mx-auto bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <p class="text-xs mt-1">成长达人</p>
+                    </div>
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="w-12 h-12 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <p class="text-xs mt-1">社区活跃</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 按钮区域 -->
+            <div class="space-y-3">
+                <button class="w-full py-3 bg-gray-100 rounded-lg text-gray-700 font-medium flex items-center justify-center">
+                    <i class="fas fa-edit mr-2"></i>编辑个人资料
+                </button>
+                <button class="w-full py-3 bg-gray-100 rounded-lg text-gray-700 font-medium flex items-center justify-center">
+                    <i class="fas fa-cog mr-2"></i>账户设置
+                </button>
+                <button class="w-full py-3 bg-gray-100 rounded-lg text-gray-700 font-medium flex items-center justify-center">
+                    <i class="fas fa-question-circle mr-2"></i>帮助中心
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 内联底部导航，不使用iframe -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40" style="height: 60px;">
+        <div class="flex justify-around items-center h-full">
+            <a href="../pages/home.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">首页</span>
+            </a>
+            <a href="../pages/courses.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-book text-xl"></i>
+                <span class="text-xs mt-1">课程</span>
+            </a>
+            <a href="../pages/journal.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-bookmark text-xl"></i>
+                <span class="text-xs mt-1">笔记</span>
+            </a>
+            <a href="../pages/coaching.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user-tie text-xl"></i>
+                <span class="text-xs mt-1">教练</span>
+            </a>
+            <a href="../pages/profile.html" class="flex flex-col items-center text-blue-500">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">我的</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

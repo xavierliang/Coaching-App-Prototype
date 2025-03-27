@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; }
+        .footer-nav {
+            height: 60px;
+            padding: 0;
+            margin: 0;
+            z-index: 40;
+        }
+    </style>
+</head>
+<body class="m-0 p-0">
+    <!-- 底部导航栏 -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 footer-nav">
+        <div class="flex justify-around items-center h-full">
+            <a href="../pages/home.html" target="_parent" id="nav-home" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">首页</span>
+            </a>
+            <a href="../pages/courses.html" target="_parent" id="nav-courses" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-book text-xl"></i>
+                <span class="text-xs mt-1">课程</span>
+            </a>
+            <a href="../pages/workshop.html" target="_parent" id="nav-workshop" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-users text-xl"></i>
+                <span class="text-xs mt-1">工作坊</span>
+            </a>
+            <a href="../pages/coaching.html" target="_parent" id="nav-coaching" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user-tie text-xl"></i>
+                <span class="text-xs mt-1">教练</span>
+            </a>
+            <a href="../pages/profile.html" target="_parent" id="nav-profile" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">我的</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 获取当前页面URL路径
+        try {
+            var parentUrl = window.parent.location.href;
+            
+            // 移除所有导航项的高亮
+            document.querySelectorAll('.footer-nav a').forEach(function(el) {
+                el.classList.remove('text-blue-500');
+                el.classList.add('text-gray-500');
+            });
+            
+            // 根据URL设置当前页面对应的导航高亮
+            if (parentUrl.includes('/home.html')) {
+                document.getElementById('nav-home').classList.add('text-blue-500');
+                document.getElementById('nav-home').classList.remove('text-gray-500');
+            } else if (parentUrl.includes('/courses.html')) {
+                document.getElementById('nav-courses').classList.add('text-blue-500');
+                document.getElementById('nav-courses').classList.remove('text-gray-500');
+            } else if (parentUrl.includes('/workshop.html')) {
+                document.getElementById('nav-workshop').classList.add('text-blue-500');
+                document.getElementById('nav-workshop').classList.remove('text-gray-500');
+            } else if (parentUrl.includes('/coaching.html')) {
+                document.getElementById('nav-coaching').classList.add('text-blue-500');
+                document.getElementById('nav-coaching').classList.remove('text-gray-500');
+            } else if (parentUrl.includes('/profile.html') || parentUrl.includes('/settings.html') || parentUrl.includes('/journal.html')) {
+                document.getElementById('nav-profile').classList.add('text-blue-500');
+                document.getElementById('nav-profile').classList.remove('text-gray-500');
+            } else {
+                // 默认高亮首页
+                document.getElementById('nav-home').classList.add('text-blue-500');
+                document.getElementById('nav-home').classList.remove('text-gray-500');
+            }
+        } catch (e) {
+            // 默认高亮首页
+            document.getElementById('nav-home').classList.add('text-blue-500');
+            document.getElementById('nav-home').classList.remove('text-gray-500');
+        }
+    </script>
+</body>
+</html> 

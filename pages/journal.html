@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI笔记 - Life Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; }
+        .status-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            height: 20px;
+        }
+        .header-container { 
+            padding: 5px 1rem 0;
+            margin: 0;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: fixed;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 40;
+        }
+        .main-content {
+            padding-top: 65px;
+            padding-bottom: 70px;
+        }
+        .chat-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .notepad-container {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .expanded-textarea {
+            min-height: 300px;
+            transition: min-height 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 引入状态栏 -->
+    <div class="status-bar-container">
+        <iframe src="../components/status-bar.html" class="w-full h-full border-0"></iframe>
+    </div>
+    
+    <!-- 内联顶部导航，不使用iframe -->
+    <div class="header-container">
+        <h1 class="text-lg font-semibold text-gray-800">Life Coach</h1>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-bell text-lg"></i>
+            </button>
+            <button class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-search text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 笔记分类 -->
+        <div class="px-4 py-3 bg-white sticky top-[65px] z-10 shadow-sm flex justify-between items-center">
+            <div class="flex items-center space-x-4 overflow-x-auto">
+                <button class="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm whitespace-nowrap">所有课程</button>
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap">未完成</button>
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap">已完成</button>
+            </div>
+        </div>
+
+        <!-- 课程笔记列表 -->
+        <div class="p-4 space-y-4">
+            <!-- 当前进行中的课程笔记 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-lg">目标设定工作坊笔记</h3>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs">进行中</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-2">
+                    已完成: 3/5 单元
+                </p>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="openCourseNotes(1, 3)" class="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm flex items-center">
+                        <i class="fas fa-pen mr-1"></i>继续记录
+                    </button>
+                </div>
+            </div>
+
+            <!-- 其他课程笔记 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-lg">情绪管理课程笔记</h3>
+                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">已完成</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-2">
+                    已完成: 5/5 单元
+                </p>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="openCourseNotes(2, 5)" class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm flex items-center">
+                        <i class="fas fa-eye mr-1"></i>查看笔记
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-lg">职业发展规划笔记</h3>
+                    <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs">未开始</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-2">
+                    课程将于明天开始
+                </p>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="openCourseNotes(3, null)" class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm flex items-center opacity-50" disabled>
+                        <i class="fas fa-lock mr-1"></i>尚未开放
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 笔记详情模态框 -->
+    <div id="notesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white w-full h-full overflow-hidden flex flex-col">
+            <!-- 模态框标题 -->
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="modalTitle">目标设定工作坊笔记</h3>
+                <div class="flex items-center">
+                    <button onclick="showOverview()" class="text-gray-600 hover:text-gray-800 mr-3">
+                        <i class="fas fa-th-list"></i>
+                    </button>
+                    <button onclick="closeModal()" class="text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 模态框内容 - 单元详情视图 -->
+            <div id="unitDetailView" class="p-4 overflow-y-auto flex-grow">
+                <!-- 引导性问题区域 -->
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-800 mb-2">单元 3: 制定SMART目标</h4>
+                    <div class="bg-blue-50 p-3 rounded-lg mb-3">
+                        <p class="text-blue-800 text-sm">引导问题: 请思考一个你想在三个月内实现的职业目标，并使用SMART原则来描述它</p>
+                    </div>
+                    
+                    <!-- 学员回答区域 -->
+                    <div class="mb-4">
+                        <textarea id="answerTextarea" class="w-full p-3 border rounded-lg transition-all duration-300" rows="5" placeholder="在这里输入你的回答..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- AI助手与记事本切换 -->
+                <div class="border rounded-lg overflow-hidden">
+                    <div class="flex border-b">
+                        <button onclick="showTab('aiCoach')" id="aiCoachTab" class="flex-1 py-2 px-4 bg-blue-500 text-white font-medium">AI教练助手</button>
+                        <button onclick="showTab('notepad')" id="notepadTab" class="flex-1 py-2 px-4 bg-gray-100 text-gray-700 font-medium">记事本</button>
+                        <button onclick="toggleAssistantPanel()" id="togglePanelBtn" class="py-2 px-3 text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-chevron-up" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="assistantPanel">
+                        <!-- AI教练助手 -->
+                        <div id="aiCoachContent" class="p-3">
+                            <div class="chat-container mb-3">
+                                <div class="flex flex-col space-y-3">
+                                    <div class="bg-blue-100 p-2 rounded-lg self-start max-w-[80%]">
+                                        <p class="text-sm">你好！我是你的AI教练助手。需要帮忙理解SMART目标原则吗？或者需要我总结之前的内容？</p>
+                                    </div>
+                                    
+                                    <div class="bg-gray-100 p-2 rounded-lg self-end max-w-[80%]">
+                                        <p class="text-sm">我不太确定如何制定一个好的职业目标</p>
+                                    </div>
+                                    
+                                    <div class="bg-blue-100 p-2 rounded-lg self-start max-w-[80%]">
+                                        <p class="text-sm">让我来帮助你！SMART目标是指：具体(Specific)、可度量(Measurable)、可实现(Achievable)、相关性(Relevant)、时限性(Time-bound)。例如，"在三个月内完成两个前端项目，提升我的React技能"比"提高编程能力"更符合SMART原则。</p>
+                                    </div>
+                                    <button class="self-start text-xs text-blue-500 flex items-center" onclick="addToNotepad('SMART目标是指：具体(Specific)、可度量(Measurable)、可实现(Achievable)、相关性(Relevant)、时限性(Time-bound)')">
+                                        <i class="fas fa-plus mr-1"></i>添加到记事本
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 聊天输入框 -->
+                            <div class="flex">
+                                <input type="text" id="chatInput" class="flex-grow border rounded-l-lg p-2 text-sm" placeholder="有什么问题，或者需要什么帮助...">
+                                <button id="sendChatBtn" class="bg-blue-500 text-white px-4 rounded-r-lg">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 记事本 -->
+                        <div id="notepadContent" class="p-3 hidden">
+                            <div class="notepad-container mb-3">
+                                <div id="notepad-entries" class="space-y-2">
+                                    <!-- 笔记条目 -->
+                                    <div class="note-entry bg-yellow-50 rounded-lg text-sm p-2">
+                                        <div class="flex justify-between items-start">
+                                            <div class="note-text flex-grow">SMART目标是指：具体(Specific)、可度量(Measurable)、可实现(Achievable)、相关性(Relevant)、时限性(Time-bound)</div>
+                                            <div class="flex space-x-1 ml-2 flex-shrink-0">
+                                                <button class="text-blue-500 hover:text-blue-700" onclick="editNoteEntry(this)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="text-red-500 hover:text-red-700" onclick="deleteNoteEntry(this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <button class="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-lg flex items-center" onclick="addNewNoteEntry()">
+                                    <i class="fas fa-plus mr-1"></i>新建笔记
+                                </button>
+                                <button class="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg flex items-center" onclick="useNotepadContent()">
+                                    <i class="fas fa-arrow-up mr-1"></i>使用内容
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模态框内容 - 课程单元总览 -->
+            <div id="courseOverview" class="p-4 overflow-y-auto flex-grow hidden">
+                <div class="mb-4">
+                    <p class="text-gray-600 text-sm">所有单元笔记一览，点击单元可查看详细内容</p>
+                </div>
+                
+                <!-- 单元列表 -->
+                <div class="space-y-4">
+                    <!-- 单元1 -->
+                    <div class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="showUnitDetail(1)">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-gray-800">单元 1: 目标设定的基础</h3>
+                                <p class="text-gray-600 text-sm mt-1">了解设定目标的重要性，以及为什么明确的目标能够帮助我们更好地规划职业发展。</p>
+                            </div>
+                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">已完成</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-xs text-gray-500">最后更新: 2024-03-10</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 单元2 -->
+                    <div class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" onclick="showUnitDetail(2)">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-gray-800">单元 2: 自我评估与反思</h3>
+                                <p class="text-gray-600 text-sm mt-1">通过自我评估工具，识别个人优势、劣势、兴趣和价值观，为目标设定奠定基础。</p>
+                            </div>
+                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">已完成</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-xs text-gray-500">最后更新: 2024-03-12</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 单元3 -->
+                    <div class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer shadow-sm border-blue-500" onclick="showUnitDetail(3)">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-gray-800">单元 3: 制定SMART目标</h3>
+                                <p class="text-gray-600 text-sm mt-1">学习使用SMART原则（具体、可度量、可实现、相关性、时限性）制定有效的职业目标。</p>
+                            </div>
+                            <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs">进行中</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-xs text-gray-500">最后更新: 2024-03-15</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 单元4 -->
+                    <div class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer opacity-75" onclick="showUnitDetail(4)">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-gray-800">单元 4: 行动计划制定</h3>
+                                <p class="text-gray-600 text-sm mt-1">将大目标分解为小步骤，制定具体的行动计划，并确定关键的里程碑和时间点。</p>
+                            </div>
+                            <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs">未开始</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-xs text-gray-500">即将开放</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 单元5 -->
+                    <div class="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer opacity-75" onclick="showUnitDetail(5)">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-gray-800">单元 5: 进度追踪与调整</h3>
+                                <p class="text-gray-600 text-sm mt-1">学习如何定期追踪目标进度，根据实际情况进行调整，并从挑战中学习。</p>
+                            </div>
+                            <span class="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full text-xs">未开始</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="text-xs text-gray-500">即将开放</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模态框底部按钮 -->
+            <div id="unitDetailFooter" class="p-4 border-t flex justify-between">
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-lg">上一单元</button>
+                <button class="px-4 py-1.5 bg-blue-500 text-white rounded-lg">保存并继续</button>
+            </div>
+            
+            <!-- 总览页底部按钮 -->
+            <div id="overviewFooter" class="p-4 border-t hidden">
+                <button onclick="closeModal()" class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-lg">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 内联底部导航，不使用iframe -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40" style="height: 60px;">
+        <div class="flex justify-around items-center h-full">
+            <a href="../pages/home.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">首页</span>
+            </a>
+            <a href="../pages/courses.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-book text-xl"></i>
+                <span class="text-xs mt-1">课程</span>
+            </a>
+            <a href="../pages/journal.html" class="flex flex-col items-center text-blue-500">
+                <i class="fas fa-bookmark text-xl"></i>
+                <span class="text-xs mt-1">笔记</span>
+            </a>
+            <a href="../pages/coaching.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user-tie text-xl"></i>
+                <span class="text-xs mt-1">教练</span>
+            </a>
+            <a href="../pages/profile.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">我的</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 显示笔记模态框
+        function openCourseNotes(courseId, unitId = null) {
+            document.getElementById('notesModal').classList.remove('hidden');
+            
+            // 如果指定了单元，则直接显示该单元
+            if (unitId) {
+                showUnitDetail(unitId);
+            } else {
+                // 否则显示课程总览
+                showOverview();
+            }
+            
+            // 这里可以根据courseId加载相应的笔记内容
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('notesModal').classList.add('hidden');
+        }
+        
+        // 显示课程单元总览
+        function showOverview() {
+            // 隐藏单元详情视图
+            document.getElementById('unitDetailView').classList.add('hidden');
+            document.getElementById('unitDetailFooter').classList.add('hidden');
+            
+            // 显示课程总览
+            document.getElementById('courseOverview').classList.remove('hidden');
+            document.getElementById('overviewFooter').classList.remove('hidden');
+        }
+        
+        // 显示单元详情
+        function showUnitDetail(unitId) {
+            // 隐藏课程总览
+            document.getElementById('courseOverview').classList.add('hidden');
+            document.getElementById('overviewFooter').classList.add('hidden');
+            
+            // 显示单元详情视图
+            document.getElementById('unitDetailView').classList.remove('hidden');
+            document.getElementById('unitDetailFooter').classList.remove('hidden');
+            
+            // 这里可以根据unitId加载相应的单元内容
+            // 模拟加载不同单元的内容
+            const modalTitle = document.getElementById('modalTitle');
+            
+            if (unitId === 1) {
+                modalTitle.textContent = '目标设定工作坊笔记 - 单元1';
+                // 更新单元内容...
+            } else if (unitId === 2) {
+                modalTitle.textContent = '目标设定工作坊笔记 - 单元2';
+                // 更新单元内容...
+            } else if (unitId === 3) {
+                modalTitle.textContent = '目标设定工作坊笔记 - 单元3';
+                // 当前单元，保持不变
+            } else {
+                modalTitle.textContent = `目标设定工作坊笔记 - 单元${unitId}`;
+                // 更新单元内容...
+            }
+        }
+        
+        // 切换标签
+        function showTab(tabName) {
+            if (tabName === 'aiCoach') {
+                document.getElementById('aiCoachContent').classList.remove('hidden');
+                document.getElementById('notepadContent').classList.add('hidden');
+                document.getElementById('aiCoachTab').classList.add('bg-blue-500', 'text-white');
+                document.getElementById('aiCoachTab').classList.remove('bg-gray-100', 'text-gray-700');
+                document.getElementById('notepadTab').classList.add('bg-gray-100', 'text-gray-700');
+                document.getElementById('notepadTab').classList.remove('bg-blue-500', 'text-white');
+            } else {
+                document.getElementById('aiCoachContent').classList.add('hidden');
+                document.getElementById('notepadContent').classList.remove('hidden');
+                document.getElementById('notepadTab').classList.add('bg-blue-500', 'text-white');
+                document.getElementById('notepadTab').classList.remove('bg-gray-100', 'text-gray-700');
+                document.getElementById('aiCoachTab').classList.add('bg-gray-100', 'text-gray-700');
+                document.getElementById('aiCoachTab').classList.remove('bg-blue-500', 'text-white');
+            }
+        }
+        
+        // 切换助手面板显示/隐藏
+        function toggleAssistantPanel() {
+            const panel = document.getElementById('assistantPanel');
+            const icon = document.getElementById('toggleIcon');
+            const answerTextarea = document.getElementById('answerTextarea');
+            
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+                answerTextarea.rows = 5; // 恢复原始高度
+                answerTextarea.classList.remove('expanded-textarea');
+            } else {
+                panel.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+                answerTextarea.rows = 12; // 增加高度
+                answerTextarea.classList.add('expanded-textarea');
+            }
+        }
+        
+        // 将AI助手内容添加到记事本
+        function addToNotepad(content) {
+            // 创建新的笔记条目
+            const notepadEntries = document.getElementById('notepad-entries');
+            
+            const newEntry = document.createElement('div');
+            newEntry.className = 'note-entry bg-yellow-50 rounded-lg text-sm p-2';
+            newEntry.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="note-text flex-grow">${content}</div>
+                    <div class="flex space-x-1 ml-2 flex-shrink-0">
+                        <button class="text-blue-500 hover:text-blue-700" onclick="editNoteEntry(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteNoteEntry(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            notepadEntries.appendChild(newEntry);
+            
+            // 显示添加成功提示
+            alert('已添加到记事本');
+        }
+        
+        // 编辑笔记条目
+        function editNoteEntry(button) {
+            const noteEntry = button.closest('.note-entry');
+            const noteText = noteEntry.querySelector('.note-text');
+            
+            // 如果当前正在编辑，则保存编辑
+            if (noteText.getAttribute('contenteditable') === 'true') {
+                noteText.setAttribute('contenteditable', 'false');
+                button.innerHTML = '<i class="fas fa-edit"></i>';
+                noteEntry.classList.remove('border', 'border-blue-500');
+            } 
+            // 否则进入编辑模式
+            else {
+                noteText.setAttribute('contenteditable', 'true');
+                noteText.focus();
+                button.innerHTML = '<i class="fas fa-save"></i>';
+                noteEntry.classList.add('border', 'border-blue-500');
+            }
+        }
+        
+        // 删除笔记条目
+        function deleteNoteEntry(button) {
+            if (confirm('确定要删除这条笔记吗？')) {
+                const noteEntry = button.closest('.note-entry');
+                noteEntry.remove();
+            }
+        }
+        
+        // 添加新的空白笔记
+        function addNewNoteEntry() {
+            const notepadEntries = document.getElementById('notepad-entries');
+            
+            const newEntry = document.createElement('div');
+            newEntry.className = 'note-entry bg-yellow-50 rounded-lg text-sm p-2 border border-blue-500';
+            newEntry.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="note-text flex-grow" contenteditable="true"></div>
+                    <div class="flex space-x-1 ml-2 flex-shrink-0">
+                        <button class="text-blue-500 hover:text-blue-700" onclick="editNoteEntry(this)">
+                            <i class="fas fa-save"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteNoteEntry(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            notepadEntries.appendChild(newEntry);
+            
+            // 自动聚焦新条目
+            setTimeout(() => {
+                newEntry.querySelector('.note-text').focus();
+            }, 0);
+        }
+        
+        // 使用记事本内容
+        function useNotepadContent() {
+            // 收集所有笔记条目的文本
+            const noteEntries = document.querySelectorAll('.note-entry .note-text');
+            let allContent = '';
+            
+            noteEntries.forEach((entry, index) => {
+                const content = entry.textContent.trim();
+                if (content) {
+                    allContent += content;
+                    // 如果不是最后一个条目且有内容，添加换行
+                    if (index < noteEntries.length - 1) {
+                        allContent += '\n\n';
+                    }
+                }
+            });
+            
+            const answerTextarea = document.getElementById('answerTextarea');
+            const currentAnswer = answerTextarea.value.trim();
+            
+            answerTextarea.value = currentAnswer ? currentAnswer + '\n\n' + allContent : allContent;
+            
+            // 显示添加成功提示
+            alert('内容已添加到回答');
+        }
+        
+        // 发送聊天消息
+        document.getElementById('sendChatBtn').addEventListener('click', function() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (message) {
+                const chatContainer = document.querySelector('.chat-container .flex');
+                
+                // 添加用户消息
+                const userMsg = document.createElement('div');
+                userMsg.className = 'bg-gray-100 p-2 rounded-lg self-end max-w-[80%]';
+                userMsg.innerHTML = `<p class="text-sm">${message}</p>`;
+                chatContainer.appendChild(userMsg);
+                
+                // 清空输入框
+                chatInput.value = '';
+                
+                // 这里可以添加发送到后端API的逻辑
+                // 模拟AI回复
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'bg-blue-100 p-2 rounded-lg self-start max-w-[80%]';
+                    aiMsg.innerHTML = `<p class="text-sm">感谢您的问题！让我来思考一下如何帮助您...</p>`;
+                    chatContainer.appendChild(aiMsg);
+                    
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'self-start text-xs text-blue-500 flex items-center';
+                    addBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>添加到记事本';
+                    addBtn.onclick = function() { addToNotepad('感谢您的问题！让我来思考一下如何帮助您...') };
+                    chatContainer.appendChild(addBtn);
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html> 

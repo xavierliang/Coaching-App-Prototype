@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作坊 - Life Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; }
+        .status-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            height: 20px;
+        }
+        .header-container { 
+            padding: 5px 1rem 0; /* 增加顶部内边距 */
+            margin: 0;
+            height: 45px; /* 增加高度以适应更大的上边距 */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            position: fixed;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 40;
+        }
+        .main-content {
+            padding-top: 65px; /* 状态栏20px + 顶部导航45px，移除额外间距 */
+            padding-bottom: 70px; /* 为底部导航腾出空间 */
+        }
+        .footer-iframe {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            margin: 0;
+            padding: 0;
+            z-index: 50;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 引入状态栏 -->
+    <div class="status-bar-container">
+        <iframe src="../components/status-bar.html" class="w-full h-full border-0"></iframe>
+    </div>
+    
+    <!-- 内联顶部导航，不使用iframe -->
+    <div class="header-container">
+        <h1 class="text-lg font-semibold text-gray-800">Life Coach</h1>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-bell text-lg"></i>
+            </button>
+            <button class="text-gray-600 hover:text-gray-800">
+                <i class="fas fa-search text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 课程/工作坊切换导航 -->
+        <div class="flex bg-white sticky top-0 z-10 shadow-sm">
+            <a href="../pages/courses.html" class="flex-1 py-3 text-center font-medium text-gray-500">
+                课程
+            </a>
+            <a href="../pages/workshop.html" class="flex-1 py-3 text-center font-medium text-blue-500 border-b-2 border-blue-500">
+                工作坊
+            </a>
+        </div>
+
+        <!-- 工作坊分类 -->
+        <div class="px-4 py-3 bg-white z-10 shadow-sm">
+            <div class="flex items-center space-x-4 overflow-x-auto pb-2">
+                <button class="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm whitespace-nowrap">全部</button>
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap">目标设定</button>
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap">团队建设</button>
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap">压力管理</button>
+                <button class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm whitespace-nowrap">时间管理</button>
+            </div>
+        </div>
+
+        <!-- 工作坊列表 -->
+        <div class="p-4 space-y-4">
+            <!-- 工作坊1 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                     alt="目标设定工作坊" class="w-full h-40 object-cover">
+                <div class="p-4">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-lg">SMART目标设定工作坊</h3>
+                        <div class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">热门</div>
+                    </div>
+                    <p class="text-gray-600 text-sm mt-2">学习如何设定具体、可衡量、可实现、相关性强且有时限的目标。</p>
+                    <div class="mt-3 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>2024-04-15 14:00-17:30</span>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-user-friends mr-2"></i>
+                        <span>已报名: 24/30</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-blue-500 font-semibold">¥199</span>
+                        <button class="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm">立即报名</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工作坊2 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm">
+                <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                     alt="时间管理工作坊" class="w-full h-40 object-cover">
+                <div class="p-4">
+                    <h3 class="font-bold text-lg">高效时间管理工作坊</h3>
+                    <p class="text-gray-600 text-sm mt-2">掌握时间管理四象限法则，提高工作效率与生活品质。</p>
+                    <div class="mt-3 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>2024-04-22 09:30-12:00</span>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-user-friends mr-2"></i>
+                        <span>已报名: 18/25</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-blue-500 font-semibold">¥149</span>
+                        <button class="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm">立即报名</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工作坊3 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm">
+                <img src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                     alt="压力管理工作坊" class="w-full h-40 object-cover">
+                <div class="p-4">
+                    <h3 class="font-bold text-lg">职场压力管理与情绪调节</h3>
+                    <p class="text-gray-600 text-sm mt-2">学习科学的压力管理技巧，提升情绪智商，平衡工作与生活。</p>
+                    <div class="mt-3 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>2024-04-28 14:00-17:00</span>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                        <i class="fas fa-user-friends mr-2"></i>
+                        <span>已报名: 15/30</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-blue-500 font-semibold">¥179</span>
+                        <button class="px-4 py-1.5 bg-blue-500 text-white rounded-full text-sm">立即报名</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 内联底部导航，不使用iframe -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40" style="height: 60px;">
+        <div class="flex justify-around items-center h-full">
+            <a href="../pages/home.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">首页</span>
+            </a>
+            <a href="../pages/courses.html" class="flex flex-col items-center text-blue-500">
+                <i class="fas fa-book text-xl"></i>
+                <span class="text-xs mt-1">课程</span>
+            </a>
+            <a href="../pages/journal.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-bookmark text-xl"></i>
+                <span class="text-xs mt-1">笔记</span>
+            </a>
+            <a href="../pages/coaching.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user-tie text-xl"></i>
+                <span class="text-xs mt-1">教练</span>
+            </a>
+            <a href="../pages/profile.html" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">我的</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; }
+        .status-bar {
+            background-color: white;
+            color: black;
+            padding: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 40px;
+        }
+        .status-icons i {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS 风格状态栏 -->
+    <div class="status-bar">
+        <div class="status-icons">
+            <span>9:41</span>
+        </div>
+        <div class="status-icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+</body>
+</html> 
